@@ -6,12 +6,15 @@ const FastBoot = require('./../src/index');
 
 describe('FastBoot with dependencies', function() {
   it('it works with dependencies', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('app-with-dependencies'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.html())
       .then(html => {
         expect(html).to.match(/https:\/\/emberjs.com/);

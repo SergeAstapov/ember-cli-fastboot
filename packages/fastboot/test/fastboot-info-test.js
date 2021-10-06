@@ -23,7 +23,9 @@ describe('FastBootInfo', function() {
   };
 
   beforeEach(function() {
-    response = {};
+    response = {
+      getHeaders() {},
+    };
     request = {
       cookie: '',
       protocol: 'http',

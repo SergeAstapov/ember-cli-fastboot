@@ -7,13 +7,14 @@ describe('Result', function() {
   var doc, result, html;
 
   beforeEach(function() {
-    var req = { headers: {}, get() {} };
+    const req = { headers: {}, get() {} };
+    const res = { getHeaders() {} };
 
     doc = new SimpleDOM.Document();
     html = `<!-- EMBER_CLI_FASTBOOT_HEAD -->
             <!-- EMBER_CLI_FASTBOOT_BODY -->`;
 
-    result = new Result(doc, html, new FastBootInfo(req, {}, ['example.com']));
+    result = new Result(doc, html, new FastBootInfo(req, res, ['example.com']));
   });
 
   it('constructor', function() {

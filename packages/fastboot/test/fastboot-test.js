@@ -51,12 +51,15 @@ describe('FastBoot', function() {
   });
 
   it('can render HTML with array of app files defined in package.json', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('multiple-app-files'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.html())
       .then(html => {
         expect(html).to.match(/Welcome to Ember/);
@@ -64,12 +67,15 @@ describe('FastBoot', function() {
   });
 
   it('outputs html attributes from the fastboot app', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('custom-html-attrs'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.html())
       .then(html => {
         expect(html).to.match(/<html data-before=1 +class="a b it-works" data-after=2/);
@@ -77,12 +83,15 @@ describe('FastBoot', function() {
   });
 
   it('outputs body attributes from the fastboot app', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('custom-body-attrs'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.html())
       .then(html => {
         expect(html).to.match(
@@ -92,12 +101,15 @@ describe('FastBoot', function() {
   });
 
   it('appends classes correctly even when there are no classes in the original body', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('custom-body-attrs-with-no-default-classes'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.html())
       .then(html => {
         expect(html).to.match(/<body data-before=1 data-after=2 +class="it-works"/);
@@ -105,12 +117,15 @@ describe('FastBoot', function() {
   });
 
   it('appends classes correctly even when there are no classes in the original html', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('custom-html-attrs-with-no-default-classes'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.html())
       .then(html => {
         expect(html).to.match(/<html data-before=1 data-after=2 +class="it-works"/);
@@ -118,7 +133,7 @@ describe('FastBoot', function() {
   });
 
   it('can render HTML when a custom set of sandbox globals is provided', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('custom-sandbox'),
       buildSandboxGlobals(globals) {
         return Object.assign({}, globals, {
@@ -127,9 +142,12 @@ describe('FastBoot', function() {
         });
       },
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/foo')
+      .visit('/foo', { response })
       .then(r => r.html())
       .then(html => {
         expect(html).to.match(/foo from sandbox: 5/);
@@ -137,31 +155,40 @@ describe('FastBoot', function() {
   });
 
   it('rejects the promise if an error occurs', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('rejected-promise'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
-    return expect(fastboot.visit('/')).to.be.rejected;
+    return expect(fastboot.visit('/', { response })).to.be.rejected;
   });
 
   it('catches the error if an error occurs', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('rejected-promise'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
-    fastboot.visit('/').catch(function(err) {
+    fastboot.visit('/', { response }).catch(function(err) {
       return expect(err).to.be.not.null;
     });
   });
 
   it('renders an empty page if the resilient flag is set', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('rejected-promise'),
       resilient: true,
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => {
         expect(r.finalized).to.be.true;
         return r.html();
@@ -172,13 +199,16 @@ describe('FastBoot', function() {
   });
 
   it('returns only one chunk if the resilient flag is set', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('rejected-promise'),
       resilient: true,
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.chunks())
       .then(chunks => {
         expect(chunks.length).to.eq(1);
@@ -187,12 +217,15 @@ describe('FastBoot', function() {
   });
 
   it('reads the config from package.json', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('config-app'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.html())
       .then(html => expect(html).to.match(/Config foo: bar/));
   });
@@ -215,25 +248,31 @@ describe('FastBoot', function() {
 
     process.env.APP_CONFIG = JSON.stringify(config);
 
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('config-app'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     delete process.env.APP_CONFIG;
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.html())
       .then(html => expect(html).to.match(/Config foo: baz/));
   });
 
   it('handles apps with config defined in app.js', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('config-not-in-meta-app'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.html())
       .then(html => expect(html).to.match(/Welcome to Ember/));
   });
@@ -246,19 +285,22 @@ describe('FastBoot', function() {
 
     copyPackage(package1Path);
 
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: distPath,
     });
+    const response = {
+      getHeaders() {},
+    };
 
     try {
       await fastboot
-        .visit('/')
+        .visit('/', { response })
         .then(r => r.html())
         .then(html => expect(html).to.match(/Config foo: bar/))
         .then(() => deletePackage())
         .then(() => copyPackage(package2Path))
         .then(hotReloadApp)
-        .then(() => fastboot.visit('/'))
+        .then(() => fastboot.visit('/', { response }))
         .then(r => r.html())
         .then(html => expect(html).to.match(/Config foo: boo/));
     } finally {
@@ -281,20 +323,26 @@ describe('FastBoot', function() {
   });
 
   it('handles apps boot-time failures by throwing Errors', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('boot-time-failing-app'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
-    return fastboot.visit('/').catch(e => expect(e).to.be.an('error'));
+    return fastboot.visit('/', { response }).catch(e => expect(e).to.be.an('error'));
   });
 
   it('can read multiple configs', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('app-with-multiple-config'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.html())
       .then(html => {
         expect(html).to.match(/App Name: app-with-multiple-configs/);
@@ -305,11 +353,17 @@ describe('FastBoot', function() {
   it('in app prototype mutations do not leak across visits with buildSandboxPerVisit=true', async function() {
     this.timeout(3000);
 
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('app-with-prototype-mutations'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
-    let result = await fastboot.visit('/', { buildSandboxPerVisit: true });
+    let result = await fastboot.visit('/', {
+      response,
+      buildSandboxPerVisit: true,
+    });
     let analytics = result.analytics;
     let html = await result.html();
 
@@ -318,7 +372,10 @@ describe('FastBoot', function() {
       usedPrebuiltSandbox: true,
     });
 
-    result = await fastboot.visit('/', { buildSandboxPerVisit: true });
+    result = await fastboot.visit('/', {
+      response,
+      buildSandboxPerVisit: true,
+    });
     analytics = result.analytics;
     html = await result.html();
 
@@ -327,7 +384,10 @@ describe('FastBoot', function() {
       usedPrebuiltSandbox: true,
     });
 
-    result = await fastboot.visit('/', { buildSandboxPerVisit: true });
+    result = await fastboot.visit('/', {
+      response,
+      buildSandboxPerVisit: true,
+    });
     analytics = result.analytics;
     html = await result.html();
 
@@ -340,23 +400,26 @@ describe('FastBoot', function() {
   it('errors can be properly attributed with buildSandboxPerVisit=true', async function() {
     this.timeout(3000);
 
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('onerror-per-visit'),
     });
 
     let first = fastboot.visit('/slow/100/reject', {
       buildSandboxPerVisit: true,
       request: { url: '/slow/100/reject', headers: {} },
+      response: { getHeaders() {} },
     });
 
     let second = fastboot.visit('/slow/50/resolve', {
       buildSandboxPerVisit: true,
       request: { url: '/slow/50/resolve', headers: {} },
+      response: { getHeaders() {} },
     });
 
     let third = fastboot.visit('/slow/25/resolve', {
       buildSandboxPerVisit: true,
       request: { url: '/slow/25/resolve', headers: {} },
+      response: { getHeaders() {} },
     });
 
     await Promise.all([second, third]);
@@ -375,7 +438,7 @@ describe('FastBoot', function() {
   it('it eagerly builds sandbox when queue is empty', async function() {
     this.timeout(3000);
 
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('onerror-per-visit'),
       maxSandboxQueueSize: 2,
     });
@@ -383,16 +446,19 @@ describe('FastBoot', function() {
     let first = fastboot.visit('/slow/50/resolve', {
       buildSandboxPerVisit: true,
       request: { url: '/slow/50/resolve', headers: {} },
+      response: { getHeaders() {} },
     });
 
     let second = fastboot.visit('/slow/50/resolve', {
       buildSandboxPerVisit: true,
       request: { url: '/slow/50/resolve', headers: {} },
+      response: { getHeaders() {} },
     });
 
     let third = fastboot.visit('/slow/25/resolve', {
       buildSandboxPerVisit: true,
       request: { url: '/slow/25/resolve', headers: {} },
+      response: { getHeaders() {} },
     });
 
     let result = await first;
@@ -417,7 +483,7 @@ describe('FastBoot', function() {
   it('it leverages sandbox from queue when present', async function() {
     this.timeout(3000);
 
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('onerror-per-visit'),
       maxSandboxQueueSize: 3,
     });
@@ -425,16 +491,19 @@ describe('FastBoot', function() {
     let first = fastboot.visit('/slow/50/resolve', {
       buildSandboxPerVisit: true,
       request: { url: '/slow/50/resolve', headers: {} },
+      response: { getHeaders() {} },
     });
 
     let second = fastboot.visit('/slow/50/resolve', {
       buildSandboxPerVisit: true,
       request: { url: '/slow/50/resolve', headers: {} },
+      response: { getHeaders() {} },
     });
 
     let third = fastboot.visit('/slow/25/resolve', {
       buildSandboxPerVisit: true,
       request: { url: '/slow/25/resolve', headers: {} },
+      response: { getHeaders() {} },
     });
 
     let result = await first;
@@ -457,12 +526,15 @@ describe('FastBoot', function() {
   });
 
   it('htmlEntrypoint works', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('html-entrypoint'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.html())
       .then(html => {
         expect(html).to.match(/Welcome to Ember/);

@@ -6,12 +6,15 @@ const FastBoot = require('./../src/index');
 
 describe('FastBootShoebox', function() {
   it('can render the escaped shoebox HTML', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('shoebox'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
-      .visit('/')
+      .visit('/', { response })
       .then(r => r.html())
       .then(html => {
         expect(html).to.match(
@@ -33,12 +36,16 @@ describe('FastBootShoebox', function() {
   });
 
   it('can render the escaped shoebox HTML with shouldRender set to false', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('shoebox'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
       .visit('/', {
+        response,
         shouldRender: false,
       })
       .then(r => r.html())
@@ -62,12 +69,16 @@ describe('FastBootShoebox', function() {
   });
 
   it('cannot render the escaped shoebox HTML when disableShoebox is set to true', function() {
-    var fastboot = new FastBoot({
+    const fastboot = new FastBoot({
       distPath: fixture('shoebox'),
     });
+    const response = {
+      getHeaders() {},
+    };
 
     return fastboot
       .visit('/', {
+        response,
         disableShoebox: true,
       })
       .then(r => r.html())
