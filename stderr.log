@@ -5,3 +5,21 @@ Warning: unknown package "classic-app-template"
 Warning: unknown package "custom-fastboot-app"
 Warning: unknown package "custom-fastboot-app"
 Warning: unknown package "ember-cli-fastboot-testing-app"
+Warning: unknown package "example-addon"
+Warning: unknown package "custom-fastboot-app"
+Warning: unknown package "ember-cli-fastboot-testing-app"
+Warning: unknown package "fastboot-test-scenarios"
+Warning: unknown package "example-addon"
+Warning: unknown package "classic-app-template"
+# Unlabeled Changes
+
+* `ember-cli-fastboot`, `fastboot`, `custom-fastboot-app`
+  * [#860](https://github.com/ember-fastboot/ember-cli-fastboot/pull/860) Upgrade Mocha across packages and fix mocha.opts configuration deprecation ([@SergeAstapov](https://github.com/SergeAstapov))
+* `ember-cli-fastboot`
+  * [#852](https://github.com/ember-fastboot/ember-cli-fastboot/pull/852) [test] Update custom output paths in index.html ([@xg-wang](https://github.com/xg-wang))
+  * [#851](https://github.com/ember-fastboot/ember-cli-fastboot/pull/851) Fix mocha tests nested packages in node_modules not using workspaces ([@xg-wang](https://github.com/xg-wang))
+* `ember-cli-fastboot`, `fastboot`
+  * [#843](https://github.com/ember-fastboot/ember-cli-fastboot/pull/843) Fix Github actions not running ([@xg-wang](https://github.com/xg-wang))
+
+
+*Cannot plan release until the above changes are labeled*.
